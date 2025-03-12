@@ -2,12 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
-    return view('dashboard');
-});
+    return view('home');
+})->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -19,6 +20,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('posts',PostController::class);
     Route::post('posts/{post}/comments',[CommentController::class,'store'])->name('comments.store');
+
 });
+Route::get('/admin', function () {
+    return "Ets un administrador!";
+})->middleware(['check-role:admin'])->name('admin');
 
 require __DIR__.'/auth.php';

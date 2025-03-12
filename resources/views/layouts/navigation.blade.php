@@ -5,9 +5,13 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
+                    @if (Auth::user())
                     <a href="{{ route('dashboard') }}">
+                    @else
+                    <a href="{{ route('home') }}">
                         <x-application-logo class="block mt-4 h-9 w-auto fill-current text-gray-800" />
                     </a>
+                    @endif
                 </div>
 
                 <!-- Navigation Links -->
