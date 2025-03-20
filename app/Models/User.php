@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar',
     ];
 
     /**
@@ -56,7 +57,6 @@ class User extends Authenticatable
                     return true;
                 }
             }
-
         }else{
             if($this->hasRole($roles)){
                 return true;
@@ -70,11 +70,14 @@ class User extends Authenticatable
      return $this->roles->contains('name', $role);
     }
 
+    public function is_admin(){
+        return $this->hasRole('admin');
+    }
 
     public function authorizeRole($roles){
         if($this->hasAnyRole($roles)){
             return true;
         }
-        abort(401,'Non authorized action');
+        return view('non_authorize');
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\NewPostNotification;
 
 class PostController extends Controller
 {
@@ -14,7 +15,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts=Post::all();
+        $posts=Post::with('comments')->paginate(3);
         return view('posts.index',compact('posts'));
     }
     /**
@@ -30,13 +31,26 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-      
-        $post=Post::create([
-        'title'=>$request->title,
-        'content'=>$request->content,
-        'user_id'=>Auth::id()
-       ]);
-       return redirect()->route('posts.index');
+        $validated=$request->validate([
+            'title'=>'required',
+            'content'=>'required',
+            'image'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        $post=new Post();
+        $post->title=$request->title;
+        $post->content=$request->content;
+        if($request->hasFile('image')){
+            $validated['image']=$request->file('image')->store('posts','public');
+        }
+        $post->user_id=Auth::id();
+        $post->save();
+        $users = User::all();
+        foreach ($users as $user) {
+            $user->notify(new NewPostNotification($post));
+        }
+
+        return redirect()->route('posts.index');
+
     }
 
     /**

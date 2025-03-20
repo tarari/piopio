@@ -12,6 +12,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
+                orbitron: ['Orbitron', ...defaultTheme.fontFamily.sans],
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
                 big: ['Big Shoulders Display', ...defaultTheme.fontFamily.sans],
             },
